@@ -1,153 +1,132 @@
 let complaints = [];
+let editIndex = -1;
 
 function saveComplaint() {
-  const customerName = document.getElementById("customerName").value.trim();
-  const phone = document.getElementById("phone").value.trim();
-  const email = document.getElementById("email").value.trim();
-  const category = document.getElementById("category").value;
-  const description = document.getElementById("description").value.trim();
-  const priority = document.getElementById("priority").value;
-  const status = document.getElementById("status").value;
-  const date = document.getElementById("date").value;
+  const complaint = {
+    customer: customerName.value,
+    phone: phone.value,
+    email: email.value,
+    category: category.value,
+    description: description.value,
+    priority: priority.value,
+    status: status.value,
+    date: date.value,
+  };
 
   if (
-    customerName === "" ||
-    phone === "" ||
-    email === "" ||
-    description === "" ||
-    date === ""
+    complaint.customer == "" ||
+    complaint.phone == "" ||
+    complaint.email == "" ||
+    complaint.description == ""
   ) {
-    alert("Please fill all fields.");
+    alert("Please fill all fields");
     return;
   }
 
-  const complaint = {
-    id: Date.now(),
-    customerName,
-    phone,
-    email,
-    category,
-    description,
-    priority,
-    status,
-    date,
-  };
+  if (editIndex == -1) {
+    complaints.push(complaint);
+  } else {
+    complaints[editIndex] = complaint;
+    editIndex = -1;
+  }
 
-  complaints.push(complaint);
+  showComplaints();
 
-  displayComplaints();
+  clearForm();
 
-  document.getElementById("customerName").value = "";
-  document.getElementById("phone").value = "";
-  document.getElementById("email").value = "";
-  document.getElementById("description").value = "";
-  document.getElementById("date").value = "";
-  document.getElementById("category").selectedIndex = 0;
-  document.getElementById("priority").selectedIndex = 0;
-  document.getElementById("status").selectedIndex = 0;
-
-  const modal = bootstrap.Modal.getInstance(
-    document.getElementById("complaintModal"),
-  );
-  modal.hide();
+  bootstrap.Modal.getInstance(document.getElementById("complaintModal")).hide();
 }
 
-function displayComplaints() {
-  const columns = document.querySelectorAll(".bg-light.rounded.shadow-sm");
+function showComplaints() {
+  newList.innerHTML = "";
+  progressList.innerHTML = "";
+  resolvedList.innerHTML = "";
+  closedList.innerHTML = "";
 
-  columns.forEach((column) => {
-    const cards = column.querySelectorAll(".complaint-card");
-    cards.forEach((card) => card.remove());
-  });
+  complaints.forEach((c, index) => {
+    const card = `
+        <div class="card shadow-sm mb-3">
 
-  complaints.forEach((c) => {
-    let column;
-
-    if (c.status === "New") {
-      column = columns[0];
-    } else if (c.status === "In Progress") {
-      column = columns[1];
-    } else if (c.status === "Resolved") {
-      column = columns[2];
-    } else {
-      column = columns[3];
-    }
-
-    const card = document.createElement("div");
-    card.className = "complaint-card card m-2 shadow-sm";
-
-    let priorityColor = "success";
-
-    if (c.priority === "High") {
-      priorityColor = "danger";
-    } else if (c.priority === "Medium") {
-      priorityColor = "warning";
-    }
-
-    card.innerHTML = `
             <div class="card-body">
-                <h6 class="fw-bold">${c.customerName}</h6>
 
-                <p class="mb-1">
-                    <strong>Category:</strong> ${c.category}
-                </p>
+                <h5>${c.customer}</h5>
 
-                <p class="mb-1">
-                    <strong>Phone:</strong> ${c.phone}
-                </p>
+                <p><b>Phone:</b> ${c.phone}</p>
 
-                <p class="mb-1">
-                    <strong>Email:</strong> ${c.email}
-                </p>
+                <p><b>Email:</b> ${c.email}</p>
 
-                <p class="mb-2">
-                    ${c.description}
-                </p>
+                <p><b>Category:</b> ${c.category}</p>
 
-                <span class="badge bg-${priorityColor}">
-                    ${c.priority}
-                </span>
+                <p>${c.description}</p>
 
-                <div class="text-muted mt-2">
-                    ${c.date}
-                </div>
+                <span class="badge bg-primary">${c.priority}</span>
+
+                <p class="mt-2">${c.date}</p>
+
+                <button class="btn btn-warning btn-sm me-2"
+                onclick="editComplaint(${index})">
+
+                Edit
+
+                </button>
+
+                <button class="btn btn-danger btn-sm"
+                onclick="deleteComplaint(${index})">
+
+                Delete
+
+                </button>
+
             </div>
+
+        </div>
         `;
 
-    column.appendChild(card);
-  });
-
-  updateCounts();
-}
-
-function updateCounts() {
-  const newCount = complaints.filter((c) => c.status === "New").length;
-  const progressCount = complaints.filter(
-    (c) => c.status === "In Progress",
-  ).length;
-  const resolvedCount = complaints.filter(
-    (c) => c.status === "Resolved",
-  ).length;
-  const closedCount = complaints.filter((c) => c.status === "Closed").length;
-
-  const badges = document.querySelectorAll(".badge");
-
-  badges[0].textContent = newCount;
-  badges[1].textContent = progressCount;
-  badges[2].textContent = resolvedCount;
-  badges[3].textContent = closedCount;
-}
-
-function searchComplaint(text) {
-  text = text.toLowerCase();
-
-  const cards = document.querySelectorAll(".complaint-card");
-
-  cards.forEach((card) => {
-    if (card.innerText.toLowerCase().includes(text)) {
-      card.style.display = "block";
+    if (c.status == "New") {
+      newList.innerHTML += card;
+    } else if (c.status == "In Progress") {
+      progressList.innerHTML += card;
+    } else if (c.status == "Resolved") {
+      resolvedList.innerHTML += card;
     } else {
-      card.style.display = "none";
+      closedList.innerHTML += card;
     }
   });
+}
+
+function editComplaint(index) {
+  editIndex = index;
+
+  const c = complaints[index];
+
+  customerName.value = c.customer;
+  phone.value = c.phone;
+  email.value = c.email;
+  category.value = c.category;
+  description.value = c.description;
+  priority.value = c.priority;
+  status.value = c.status;
+  date.value = c.date;
+
+  const modal = new bootstrap.Modal(document.getElementById("complaintModal"));
+
+  modal.show();
+}
+
+function deleteComplaint(index) {
+  if (confirm("Delete this complaint?")) {
+    complaints.splice(index, 1);
+
+    showComplaints();
+  }
+}
+function clearForm() {
+  customerName.value = "";
+  phone.value = "";
+  email.value = "";
+  category.selectedIndex = 0;
+  description.value = "";
+  priority.selectedIndex = 0;
+  status.selectedIndex = 0;
+  date.value = "";
 }

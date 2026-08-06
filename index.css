@@ -1,0 +1,90 @@
+body {
+    color: #3b6efd;
+    font-family: Segoe UI, sans-serif;
+}
+
+.navbar {
+    box-shadow: 0 3px 10px #3b6efd;
+}
+
+.search-box {
+    width: 280px;
+}
+
+.modal-content {
+    border: none;
+    border-radius: 15px;
+}
+
+.modal-header {
+    background: #3b6efd;
+    color: white;
+}
+
+.modal-header .btn-close {
+    filter: invert(1);
+}
+
+label {
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.form-control,
+.form-select {
+    border-radius: 10px;
+}
+
+.column {
+    height: 82vh;
+    overflow-y: auto;
+}
+
+.card-complaint {
+    background: white;
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, .1);
+    transition: .3s;
+    cursor: pointer;
+}
+
+.card-complaint:hover {
+    transform: translateY(-3px);
+}
+
+.priority-high {
+    color: red;
+    font-weight: bold;
+}
+
+.priority-medium {
+    color: #ff9800;
+    font-weight: bold;
+}
+
+.priority-low {
+    color: green;
+    font-weight: bold;
+}
+
+.card-title {
+    font-weight: 700;
+    font-size: 18px;
+}
+
+.card-footer {
+    background: none;
+    border: none;
+    padding: 0;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #bdbdbd;
+    border-radius: 10px;
+}
