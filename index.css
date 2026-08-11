@@ -1,90 +1,182 @@
 body {
-    color: #3b6efd;
-    font-family: Segoe UI, sans-serif;
+    margin: 0;
+    background-color: #f5f7fa;
+    font-family: Arial, sans-serif;
 }
 
-.navbar {
-    box-shadow: 0 3px 10px #e1e3e7;
+.navbar-custom {
+    height: 58px;
+    background-color: #ffffff;
+}
+
+.navbar-brand {
+    font-size: 25px;
+    color: #202124 !important;
 }
 
 .search-box {
-    width: 280px;
+    width: 200px;
+    height: 35px;
+    border: 1px solid #e1e4e8;
+    border-radius: 7px;
 }
 
-.modal-content {
-    border: none;
-    border-radius: 15px;
-}
-
-.modal-header {
-    background: #3b6efd;
-    color: white;
-}
-
-.modal-header .btn-close {
-    filter: invert(1);
-}
-
-label {
-    font-weight: 600;
-    margin-bottom: 5px;
-}
-
-.form-control,
-.form-select {
-    border-radius: 10px;
+.board {
+    padding: 20px 25px;
 }
 
 .column {
     height: 82vh;
-    overflow-y: auto;
+    background-color: #f8f9fa;
+    border: 1px solid #e1e4e8;
+    border-radius: 5px;
+    overflow: hidden;
 }
 
-.card-complaint {
-    background: white;
-    border-radius: 12px;
+.column-header {
+    height: 53px;
+    background-color: #ffffff;
+    border-bottom: 1px solid #e1e4e8;
+    padding: 0 20px;
+}
+
+.column-title {
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.new-title {
+    color: #2878e8;
+}
+
+.progress-title {
+    color: #e4a900;
+}
+
+.resolved-title {
+    color: #438f68;
+}
+
+.closed-title {
+    color: #222222;
+}
+
+.count {
+    min-width: 35px;
+    height: 27px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+    font-size: 12px;
+}
+
+.new-count {
+    background-color: #dceaff;
+    color: #2878e8;
+}
+
+.progress-count {
+    background-color: #fff1c7;
+    color: #d89c00;
+}
+
+.resolved-count {
+    background-color: #d9eee4;
+    color: #388b63;
+}
+
+.closed-count {
+    background-color: #e4e6e8;
+    color: #555;
+}
+
+.complaint-card {
+    background-color: #ffffff;
+    margin: 15px;
     padding: 15px;
-    margin-bottom: 15px;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, .1);
-    transition: .3s;
-    cursor: pointer;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
 }
 
-.card-complaint:hover {
-    transform: translateY(-3px);
+.customer-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: #202124;
 }
 
-.priority-high {
-    color: red;
-    font-weight: bold;
+.category {
+    margin-top: 7px;
+    font-size: 13px;
+    color: #777;
 }
 
-.priority-medium {
-    color: #ff9800;
-    font-weight: bold;
+.description {
+    margin-top: 12px;
+    font-size: 14px;
+    color: #333;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.priority-low {
-    color: green;
-    font-weight: bold;
+.priority {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 3px 7px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
 }
 
-.card-title {
-    font-weight: 700;
-    font-size: 18px;
+.high {
+    background-color: #dc3545;
+    color: white;
 }
 
-.card-footer {
-    background: none;
+.medium {
+    background-color: #ffc107;
+    color: #111;
+}
+
+.low {
+    background-color: #399866;
+    color: white;
+}
+
+.date {
+    margin-top: 16px;
+    color: #777;
+    font-size: 13px;
+}
+
+.edit-btn,
+.delete-btn {
     border: none;
+    background: transparent;
     padding: 0;
+    cursor: pointer;
+    font-size: 14px;
 }
 
-::-webkit-scrollbar {
-    width: 8px;
+.edit-btn {
+    color: #f1c40f;
+    margin-right: 15px;
 }
 
-::-webkit-scrollbar-thumb {
-    background: #bdbdbd;
-    border-radius: 10px;
+.delete-btn {
+    color: #dc3545;
+}
+
+.edit-btn:hover {
+    color: #d4a900;
+}
+
+.delete-btn:hover {
+    color: #b02a37;
+}
+
+.navbar .btn {
+    height: 35px;
+    font-size: 14px;
 }
