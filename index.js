@@ -277,3 +277,13 @@ if (complaintModal) {
 document.addEventListener("DOMContentLoaded", function () {
   renderComplaints();
 });
+
+function searchComplaints() {
+  const priority = document.getElementById("searchPriority").value;
+
+  const filteredComplaints = complaints.filter(function (complaint) {
+    return priority === "" || complaint.priority === priority;
+  });
+
+  displayComplaints(filteredComplaints);
+}

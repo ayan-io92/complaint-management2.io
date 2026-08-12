@@ -31,6 +31,15 @@
 
                 <input type="text" class="form-control search-box" placeholder="Search complaints...">
 
+                <select class="form-select" id="searchPriority" onchange="searchComplaints()">
+                    <option value="">All</option>
+                    <option value="High">High</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Low">Low</option>
+                </select>
+
+                <div id="complaintsContainer"></div>
+
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#complaintModal">
 
                     New
