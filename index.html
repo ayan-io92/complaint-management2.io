@@ -20,22 +20,20 @@
         <div class="container-fluid">
 
             <a class="navbar-brand d-flex align-items-center" style="color: #202124;">
-
-
-
                 Complaint Management
-
             </a>
 
-            <div class="d-flex align-items-center gap-2">
+            <div class="search d-flex align-items-center gap-2">
 
-                <input type="text" class="form-control search-box" placeholder="Search complaints...">
+                <input type="text" id="complaintSearch" class="form-control" placeholder="Search complaints...">
 
-                <select class="form-select" id="searchPriority" onchange="searchComplaints()">
+                <select id="searchPriority" class="form-control">
+
                     <option value="">All</option>
                     <option value="High">High</option>
                     <option value="Medium">Medium</option>
                     <option value="Low">Low</option>
+
                 </select>
 
                 <div id="complaintsContainer"></div>

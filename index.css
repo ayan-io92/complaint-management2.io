@@ -1,4 +1,6 @@
 body {
+
+    user-select: none;
     margin: 0;
     background-color: #f5f7fa;
     font-family: Arial, sans-serif;
@@ -19,6 +21,10 @@ body {
     height: 35px;
     border: 1px solid #e1e4e8;
     border-radius: 7px;
+}
+
+.search input {
+    width: 200px;
 }
 
 .board {

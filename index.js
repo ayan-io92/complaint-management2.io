@@ -46,6 +46,7 @@ let complaints = [
 ];
 
 let editingId = null;
+let draggedComplaintId = null;
 
 function saveComplaint() {
   const name = document.getElementById("customerName").value.trim();
@@ -75,8 +76,6 @@ function saveComplaint() {
       complaint.status = status;
       complaint.date = date;
     }
-
-    editingId = null;
   } else {
     complaints.push({
       id: Date.now(),
@@ -95,49 +94,83 @@ function saveComplaint() {
   resetForm();
 
   const modalElement = document.getElementById("complaintModal");
-  const modal = bootstrap.Modal.getInstance(modalElement);
 
-  if (modal) {
-    modal.hide();
+  if (modalElement) {
+    const modal = bootstrap.Modal.getInstance(modalElement);
+
+    if (modal) {
+      modal.hide();
+    }
   }
 }
 
 function renderComplaints(searchText = "") {
+  const newTitle = document.querySelector(".new-title");
+  const progressTitle = document.querySelector(".progress-title");
+  const resolvedTitle = document.querySelector(".resolved-title");
+  const closedTitle = document.querySelector(".closed-title");
+
   const columns = {
-    New: document.querySelector(".new-title").closest(".column"),
-    "In Progress": document.querySelector(".progress-title").closest(".column"),
-    Resolved: document.querySelector(".resolved-title").closest(".column"),
-    Closed: document.querySelector(".closed-title").closest(".column"),
+    New: newTitle ? newTitle.closest(".column") : null,
+    "In Progress": progressTitle ? progressTitle.closest(".column") : null,
+    Resolved: resolvedTitle ? resolvedTitle.closest(".column") : null,
+    Closed: closedTitle ? closedTitle.closest(".column") : null,
   };
 
   Object.values(columns).forEach((column) => {
-    column.querySelectorAll(".complaint-card").forEach((card) => {
-      card.remove();
-    });
+    if (!column) {
+      return;
+    }
+
+    column.querySelectorAll(".complaint-card").forEach((card) => card.remove());
   });
 
-  const search = searchText.toLowerCase();
+  const search = searchText.toLowerCase().trim();
 
-  const filteredComplaints = complaints.filter(
-    (complaint) =>
+  const priorityElement = document.getElementById("searchPriority");
+
+  const selectedPriority = priorityElement ? priorityElement.value : "";
+
+  const filteredComplaints = complaints.filter((complaint) => {
+    const matchesSearch =
       complaint.name.toLowerCase().includes(search) ||
+      complaint.phone.toLowerCase().includes(search) ||
+      complaint.email.toLowerCase().includes(search) ||
       complaint.category.toLowerCase().includes(search) ||
       complaint.description.toLowerCase().includes(search) ||
       complaint.priority.toLowerCase().includes(search) ||
-      complaint.status.toLowerCase().includes(search),
-  );
+      complaint.status.toLowerCase().includes(search);
+
+    const matchesPriority =
+      selectedPriority === "" || complaint.priority === selectedPriority;
+
+    return matchesSearch && matchesPriority;
+  });
 
   filteredComplaints.forEach((complaint) => {
     const column = columns[complaint.status];
 
-    if (!column) return;
+    if (!column) {
+      return;
+    }
 
     const card = document.createElement("div");
 
     card.className = "complaint-card";
 
+    card.setAttribute("draggable", "true");
+
+    card.addEventListener("dragstart", function (event) {
+      dragStart(event, complaint.id);
+    });
+
+    card.addEventListener("dragend", function (event) {
+      dragEnd(event);
+    });
+
     card.innerHTML = `
             <div class="d-flex justify-content-between align-items-start">
+
                 <div>
                     <div class="customer-name">
                         ${complaint.name}
@@ -149,14 +182,21 @@ function renderComplaints(searchText = "") {
                 </div>
 
                 <div>
-                    <button class="edit-btn" onclick="editComplaint(${complaint.id})">
+
+                    <button
+                        class="edit-btn"
+                        onclick="editComplaint(${complaint.id})">
                         <i class="fa-solid fa-pen"></i>
                     </button>
 
-                    <button class="delete-btn" onclick="deleteComplaint(${complaint.id})">
+                    <button
+                        class="delete-btn"
+                        onclick="deleteComplaint(${complaint.id})">
                         <i class="fa-solid fa-trash-can"></i>
                     </button>
+
                 </div>
+
             </div>
 
             <div class="description">
@@ -197,73 +237,161 @@ function getPriorityClass(priority) {
 function editComplaint(id) {
   const complaint = complaints.find((item) => item.id === id);
 
-  if (!complaint) return;
+  if (!complaint) {
+    return;
+  }
 
   editingId = id;
 
   document.getElementById("customerName").value = complaint.name;
+
   document.getElementById("phone").value = complaint.phone;
+
   document.getElementById("email").value = complaint.email;
+
   document.getElementById("category").value = complaint.category;
+
   document.getElementById("description").value = complaint.description;
+
   document.getElementById("priority").value = complaint.priority;
+
   document.getElementById("status").value = complaint.status;
+
   document.getElementById("date").value = complaint.date;
 
   const modalElement = document.getElementById("complaintModal");
-  const modal = new bootstrap.Modal(modalElement);
 
-  modal.show();
+  if (modalElement) {
+    const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+
+    modal.show();
+  }
 }
 
 function deleteComplaint(id) {
   const complaint = complaints.find((item) => item.id === id);
 
-  if (!complaint) return;
+  if (!complaint) {
+    return;
+  }
 
-  if (confirm("Are you sure you want to delete this complaint?")) {
+  const confirmDelete = confirm(
+    "Are you sure you want to delete this complaint?",
+  );
+
+  if (confirmDelete) {
     complaints = complaints.filter((item) => item.id !== id);
+
     renderComplaints();
   }
 }
 
-const searchBox = document.querySelector(".search-box");
+function updateCounts() {
+  const newCount = document.querySelector(".new-count");
 
-if (searchBox) {
-  searchBox.addEventListener("input", function () {
+  const progressCount = document.querySelector(".progress-count");
+
+  const resolvedCount = document.querySelector(".resolved-count");
+
+  const closedCount = document.querySelector(".closed-count");
+
+  if (newCount) {
+    newCount.textContent = complaints.filter(
+      (item) => item.status === "New",
+    ).length;
+  }
+
+  if (progressCount) {
+    progressCount.textContent = complaints.filter(
+      (item) => item.status === "In Progress",
+    ).length;
+  }
+
+  if (resolvedCount) {
+    resolvedCount.textContent = complaints.filter(
+      (item) => item.status === "Resolved",
+    ).length;
+  }
+
+  if (closedCount) {
+    closedCount.textContent = complaints.filter(
+      (item) => item.status === "Closed",
+    ).length;
+  }
+}
+
+function resetForm() {
+  const customerName = document.getElementById("customerName");
+
+  const phone = document.getElementById("phone");
+
+  const email = document.getElementById("email");
+
+  const category = document.getElementById("category");
+
+  const description = document.getElementById("description");
+
+  const priority = document.getElementById("priority");
+
+  const status = document.getElementById("status");
+
+  const date = document.getElementById("date");
+
+  if (customerName) {
+    customerName.value = "";
+  }
+
+  if (phone) {
+    phone.value = "";
+  }
+
+  if (email) {
+    email.value = "";
+  }
+
+  if (category) {
+    category.selectedIndex = 0;
+  }
+
+  if (description) {
+    description.value = "";
+  }
+
+  if (priority) {
+    priority.selectedIndex = 0;
+  }
+
+  if (status) {
+    status.selectedIndex = 0;
+  }
+
+  if (date) {
+    date.value = "";
+  }
+
+  editingId = null;
+}
+
+const complaintSearch = document.getElementById("complaintSearch");
+
+const searchPriority = document.getElementById("searchPriority");
+
+if (complaintSearch) {
+  complaintSearch.addEventListener("input", function () {
     renderComplaints(this.value);
   });
 }
 
-function updateCounts() {
-  document.querySelector(".new-count").textContent = complaints.filter(
-    (item) => item.status === "New",
-  ).length;
-
-  document.querySelector(".progress-count").textContent = complaints.filter(
-    (item) => item.status === "In Progress",
-  ).length;
-
-  document.querySelector(".resolved-count").textContent = complaints.filter(
-    (item) => item.status === "Resolved",
-  ).length;
-
-  document.querySelector(".closed-count").textContent = complaints.filter(
-    (item) => item.status === "Closed",
-  ).length;
+if (searchPriority) {
+  searchPriority.addEventListener("change", function () {
+    renderComplaints(complaintSearch ? complaintSearch.value : "");
+  });
 }
 
-function resetForm() {
-  document.getElementById("customerName").value = "";
-  document.getElementById("phone").value = "";
-  document.getElementById("email").value = "";
-  document.getElementById("category").selectedIndex = 0;
-  document.getElementById("description").value = "";
-  document.getElementById("priority").selectedIndex = 0;
-  document.getElementById("status").selectedIndex = 0;
-  document.getElementById("date").value = "";
+function searchComplaints() {
+  const search = complaintSearch ? complaintSearch.value : "";
 
-  editingId = null;
+  renderComplaints(search);
 }
 
 const complaintModal = document.getElementById("complaintModal");
@@ -274,16 +402,22 @@ if (complaintModal) {
   });
 }
 
+function dragStart(event, id) {
+  draggedComplaintId = id;
+
+  event.currentTarget.classList.add("dragging");
+
+  if (event.dataTransfer) {
+    event.dataTransfer.setData("text/plain", id);
+  }
+}
+
+function dragEnd(event) {
+  event.currentTarget.classList.remove("dragging");
+
+  draggedComplaintId = null;
+}
+
 document.addEventListener("DOMContentLoaded", function () {
   renderComplaints();
 });
-
-function searchComplaints() {
-  const priority = document.getElementById("searchPriority").value;
-
-  const filteredComplaints = complaints.filter(function (complaint) {
-    return priority === "" || complaint.priority === priority;
-  });
-
-  displayComplaints(filteredComplaints);
-}
