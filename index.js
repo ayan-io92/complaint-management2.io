@@ -1,49 +1,4 @@
-let complaints = [
-  {
-    id: 1,
-    name: "John Doe",
-    phone: "03001234567",
-    email: "john@gmail.com",
-    category: "Billing",
-    description: "Incorrect amount charged on the bill.",
-    priority: "High",
-    status: "New",
-    date: "2026-07-30",
-  },
-  {
-    id: 2,
-    name: "Sarah Khan",
-    phone: "03111234567",
-    email: "sarah@gmail.com",
-    category: "Technical",
-    description: "Internet connection drops every few minutes.",
-    priority: "Medium",
-    status: "In Progress",
-    date: "2026-07-28",
-  },
-  {
-    id: 3,
-    name: "Ali Ahmed",
-    phone: "03221234567",
-    email: "ali@gmail.com",
-    category: "Customer Service",
-    description: "Support ticket has not received a response.",
-    priority: "Low",
-    status: "Resolved",
-    date: "2026-07-25",
-  },
-  {
-    id: 4,
-    name: "Emily Smith",
-    phone: "03331234567",
-    email: "emily@gmail.com",
-    category: "Delivery",
-    description: "Package arrived damaged.",
-    priority: "High",
-    status: "Closed",
-    date: "2026-07-20",
-  },
-];
+let complaints = [];
 
 let editingId = null;
 let draggedComplaintId = null;
@@ -59,7 +14,20 @@ function saveComplaint() {
   const date = document.getElementById("date").value;
 
   if (!name || !phone || !email || !description || !date) {
-    alert("Please fill all fields.");
+    alert("Please fill name, phone, email, description, and date fields.");
+    return;
+  }
+
+  const namePattern = /^[A-Za-z ]+$/;
+  const phonePattern = /^\+?[0-9- -]+$/;
+
+  if (!namePattern.test(name)) {
+    alert("Name can only contain alphabets and spaces.");
+    return;
+  }
+
+  if (!phonePattern.test(phone)) {
+    alert("Phone number can only contain + and digits.");
     return;
   }
 
@@ -122,7 +90,9 @@ function renderComplaints(searchText = "") {
       return;
     }
 
-    column.querySelectorAll(".complaint-card").forEach((card) => card.remove());
+    column.querySelectorAll(".complaint-card").forEach((card) => {
+      card.remove();
+    });
   });
 
   const search = searchText.toLowerCase().trim();
@@ -157,8 +127,8 @@ function renderComplaints(searchText = "") {
     const card = document.createElement("div");
 
     card.className = "complaint-card";
-
     card.setAttribute("draggable", "true");
+    card.setAttribute("data-id", complaint.id);
 
     card.addEventListener("dragstart", function (event) {
       dragStart(event, complaint.id);
@@ -169,48 +139,51 @@ function renderComplaints(searchText = "") {
     });
 
     card.innerHTML = `
-            <div class="d-flex justify-content-between align-items-start">
+      <div class="d-flex justify-content-between align-items-start">
 
-                <div>
-                    <div class="customer-name">
-                        ${complaint.name}
-                    </div>
+        <div>
+          <div class="customer-name">
+            ${complaint.name}
+          </div>
 
-                    <div class="category">
-                        ${complaint.category}
-                    </div>
-                </div>
+          <div class="category">
+            ${complaint.category}
+          </div>
 
-                <div>
+          <div class="phone">
+            <i class="fa-solid fa-phone"></i>
+            ${complaint.phone}
+          </div>
+        </div>
 
-                    <button
-                        class="edit-btn"
-                        onclick="editComplaint(${complaint.id})">
-                        <i class="fa-solid fa-pen"></i>
-                    </button>
+        <div>
+          <button
+            class="edit-btn"
+            onclick="editComplaint(${complaint.id})">
+            <i class="fa-solid fa-pen"></i>
+          </button>
 
-                    <button
-                        class="delete-btn"
-                        onclick="deleteComplaint(${complaint.id})">
-                        <i class="fa-solid fa-trash-can"></i>
-                    </button>
+          <button
+            class="delete-btn"
+            onclick="deleteComplaint(${complaint.id})">
+            <i class="fa-solid fa-trash-can"></i>
+          </button>
+        </div>
 
-                </div>
+      </div>
 
-            </div>
+      <div class="description">
+        ${complaint.description}
+      </div>
 
-            <div class="description">
-                ${complaint.description}
-            </div>
+      <span class="priority ${getPriorityClass(complaint.priority)}">
+        ${complaint.priority}
+      </span>
 
-            <span class="priority ${getPriorityClass(complaint.priority)}">
-                ${complaint.priority}
-            </span>
-
-            <div class="date">
-                ${complaint.date}
-            </div>
-        `;
+      <div class="date">
+        ${complaint.date}
+      </div>
+    `;
 
     column.appendChild(card);
   });
@@ -408,16 +381,111 @@ function dragStart(event, id) {
   event.currentTarget.classList.add("dragging");
 
   if (event.dataTransfer) {
-    event.dataTransfer.setData("text/plain", id);
+    event.dataTransfer.effectAllowed = "move";
+
+    event.dataTransfer.setData("text/plain", String(id));
   }
 }
 
 function dragEnd(event) {
   event.currentTarget.classList.remove("dragging");
 
+  document.querySelectorAll(".column").forEach((column) => {
+    column.classList.remove("drag-over");
+  });
+}
+
+function allowDrop(event) {
+  event.preventDefault();
+
+  if (event.dataTransfer) {
+    event.dataTransfer.dropEffect = "move";
+  }
+
+  const column = event.currentTarget;
+
+  column.classList.add("drag-over");
+}
+
+function dragLeave(event) {
+  const column = event.currentTarget;
+
+  if (!column.contains(event.relatedTarget)) {
+    column.classList.remove("drag-over");
+  }
+}
+
+function dropComplaint(event, newStatus) {
+  event.preventDefault();
+
+  const column = event.currentTarget;
+
+  column.classList.remove("drag-over");
+
+  let id = draggedComplaintId;
+
+  if (event.dataTransfer) {
+    const dataId = event.dataTransfer.getData("text/plain");
+
+    if (dataId) {
+      id = Number(dataId);
+    }
+  }
+
+  if (!id) {
+    return;
+  }
+
+  const complaint = complaints.find((item) => item.id === id);
+
+  if (!complaint) {
+    return;
+  }
+
+  complaint.status = newStatus;
+
   draggedComplaintId = null;
+
+  const searchValue = complaintSearch ? complaintSearch.value : "";
+
+  renderComplaints(searchValue);
+}
+
+function setupDragAndDrop() {
+  const newTitle = document.querySelector(".new-title");
+
+  const progressTitle = document.querySelector(".progress-title");
+
+  const resolvedTitle = document.querySelector(".resolved-title");
+
+  const closedTitle = document.querySelector(".closed-title");
+
+  const columns = {
+    New: newTitle ? newTitle.closest(".column") : null,
+
+    "In Progress": progressTitle ? progressTitle.closest(".column") : null,
+
+    Resolved: resolvedTitle ? resolvedTitle.closest(".column") : null,
+
+    Closed: closedTitle ? closedTitle.closest(".column") : null,
+  };
+
+  Object.entries(columns).forEach(([status, column]) => {
+    if (!column) {
+      return;
+    }
+
+    column.addEventListener("dragover", allowDrop);
+
+    column.addEventListener("dragleave", dragLeave);
+
+    column.addEventListener("drop", function (event) {
+      dropComplaint(event, status);
+    });
+  });
 }
 
 document.addEventListener("DOMContentLoaded", function () {
+  setupDragAndDrop();
   renderComplaints();
 });
