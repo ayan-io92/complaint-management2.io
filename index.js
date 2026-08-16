@@ -207,6 +207,16 @@ function getPriorityClass(priority) {
   return "";
 }
 
+function openComplaintModal() {
+  document.getElementById("complaintModalTitle").textContent = "Add Complaint";
+  const modalElement = document.getElementById("complaintModal");
+  if (modalElement) {
+    const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+
+    modal.show();
+  }
+}
+
 function editComplaint(id) {
   const complaint = complaints.find((item) => item.id === id);
 
@@ -215,6 +225,7 @@ function editComplaint(id) {
   }
 
   editingId = id;
+  document.getElementById("complaintModalTitle").textContent = "Edit Complaint";
 
   document.getElementById("customerName").value = complaint.name;
 
