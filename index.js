@@ -27,6 +27,7 @@ function generateCard(user) {
         <p>Email: ${user.email}</p>
         <p>Phone: ${user.phone}</p>
         <p>Age: ${user.age}</p>
+        <p>Gender: ${user.gender}</p>
     `;
 
   container.appendChild(card);
