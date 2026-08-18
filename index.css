@@ -1,224 +1,31 @@
 body {
-    user-select: none;
-    margin: 0;
-    background-color: #f5f7fa;
     font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    padding: 30px;
 }
 
-.navbar-custom {
-    height: 58px;
-    background-color: #ffffff;
+h1 {
+    text-align: center;
 }
 
-.navbar-brand {
-    font-size: 25px;
-    color: #202124 !important;
+#users-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-top: 30px;
 }
 
-.search-box {
-    width: 200px;
-    height: 35px;
-    border: 1px solid #e1e4e8;
-    border-radius: 7px;
-}
-
-.search input {
-    width: 200px;
-}
-
-.board {
-    padding: 20px 25px;
-}
-
-.column {
-    height: 82vh;
-    background-color: #f8f9fa;
-    border: 1px solid #e1e4e8;
-    border-radius: 5px;
-    overflow: hidden;
-    transition: 0.2s;
-}
-
-.column-header {
-    height: 53px;
-    background-color: #ffffff;
-    border-bottom: 1px solid #e1e4e8;
-    padding: 0 20px;
-}
-
-.column-title {
-    font-size: 15px;
-    font-weight: 600;
-}
-
-/* Modal Width */
-#complaintModal .modal-dialog {
-    max-width: 1100px;
-    width: 95%;
-}
-
-#complaintModal .modal-content {
+.user-card {
+    background-color: white;
+    padding: 20px;
     border-radius: 10px;
-    border: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-#complaintModal .modal-header {
-    background-color: #4a6cf7;
-    color: white;
+.user-card h3 {
+    margin-top: 0;
 }
 
-#complaintModal .modal-header .btn-close {
-    filter: invert(1);
-}
-
-.new-title {
-    color: #2878e8;
-}
-
-.progress-title {
-    color: #e4a900;
-}
-
-.resolved-title {
-    color: #438f68;
-}
-
-.closed-title {
-    color: #222222;
-}
-
-.count {
-    min-width: 35px;
-    height: 27px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 20px;
-    font-size: 12px;
-}
-
-.new-count {
-    background-color: #dceaff;
-    color: #2878e8;
-}
-
-.progress-count {
-    background-color: #fff1c7;
-    color: #d89c00;
-}
-
-.resolved-count {
-    background-color: #d9eee4;
-    color: #388b63;
-}
-
-.closed-count {
-    background-color: #e4e6e8;
-    color: #555;
-}
-
-.complaint-card {
-    background-color: #ffffff;
-    margin: 15px;
-    padding: 15px;
-    border-radius: 4px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
-    cursor: grab;
-    transition: 0.2s;
-}
-
-.complaint-card:active {
-    cursor: grabbing;
-}
-
-.complaint-card.dragging {
-    opacity: 0.5;
-    transform: scale(0.98);
-}
-
-.column.drag-over {
-    background-color: #f0f4ff;
-    border: 2px dashed #4a6cf7;
-}
-
-.customer-name {
-    font-size: 15px;
-    font-weight: 600;
-    color: #202124;
-}
-
-.category {
-    margin-top: 7px;
-    font-size: 13px;
-    color: #777;
-}
-
-.description {
-    margin-top: 12px;
-    font-size: 14px;
-    color: #333;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.priority {
-    display: inline-block;
-    margin-top: 10px;
-    padding: 3px 7px;
-    border-radius: 4px;
-    font-size: 11px;
-    font-weight: 600;
-}
-
-.high {
-    background-color: #dc3545;
-    color: white;
-}
-
-.medium {
-    background-color: #ffc107;
-    color: #111;
-}
-
-.low {
-    background-color: #399866;
-    color: white;
-}
-
-.date {
-    margin-top: 16px;
-    color: #777;
-    font-size: 13px;
-}
-
-.edit-btn,
-.delete-btn {
-    border: none;
-    background: transparent;
-    padding: 0;
-    cursor: pointer;
-    font-size: 14px;
-}
-
-.edit-btn {
-    color: #f1c40f;
-    margin-right: 15px;
-}
-
-.delete-btn {
-    color: #dc3545;
-}
-
-.edit-btn:hover {
-    color: #d4a900;
-}
-
-.delete-btn:hover {
-    color: #b02a37;
-}
-
-.navbar .btn {
-    height: 35px;
-    font-size: 14px;
+.user-card p {
+    margin: 8px 0;
 }
